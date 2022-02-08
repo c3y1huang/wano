@@ -1,6 +1,6 @@
 # wasmlet
 
-A development tool and runtime for managing and running (WASI) WASM modules.
+A development tool and runtime for managing and running WASI or non-WASI WASM modules.
 
 ## Functions
 
