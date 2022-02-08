@@ -4,11 +4,11 @@ A development tool and runtime for managing and running (WASI) WASM modules.
 
 ## Functions
 
-- Build (WASI) WASM module with metadata describing the execution configurations
-- Push WASM module with annotated metadata to an OCI registry
-- Pull WASM module from an OCI registry
-- Run WASM module adaptively for WASI or non-WASI module based on Deno
-- Run WASM module with a specific runtime
+- Build a WASI or non-WASI WASM module with metadata describing the execution configurations
+- Push a WASM module with annotated metadata to an OCI registry
+- Pull a WASM module from an OCI registry
+- Run a WASM module adaptively for WASI or non-WASI module based on Deno
+- Run a WASM module with a specific runtime
 - List all managed WASM modules
 - List all running WASM modules
 
