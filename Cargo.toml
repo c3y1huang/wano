@@ -10,3 +10,8 @@ clap = "3.0"
 anyhow = "1.0"
 env_logger = "0"
 tokio = { version = "1", features = ["full"] }
+oci-distribution = "0"
+wasm-pack = "0"
+wasmtime = "0"
+serde = { version = "1.0", features = ["derive"] }
+serde_yaml = "0"
