@@ -1,0 +1,10 @@
+default: clean build
+
+clean:
+	rm -rf ./pkg
+	cargo clean
+build:
+	rm -rf ./pkg
+	wasm-pack build -t web
+run:
+	deno run --allow-all main.ts
