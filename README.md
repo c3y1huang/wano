@@ -1,4 +1,4 @@
-> Note: wasmlet is under active development
+> This project is under active development 🚧!
 
 # wasmlet
 
