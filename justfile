@@ -19,4 +19,4 @@ fmt:
 	cargo fmt
 
 lint:
-	cargo fmt
+	cargo clippy --fix --allow-dirty --allow-staged
