@@ -1,4 +1,4 @@
-import Context from "https://deno.land/std@0.125.0/wasi/snapshot_preview1.ts";
+import Context from "https://deno.land/std@0.130.0/wasi/snapshot_preview1.ts";
 
 const context = new Context({
     args: Deno.args,

@@ -1,28 +1,27 @@
 > This project is under active development 🚧!
 
-# wasmlet
+# WANO
 
-A development tool and runtime for managing and running WASI or non-WASI WASM modules adaptively.
+A WASM development tool and runtime based on different WASM providers.
 
 ## Functions
 
-- build
+- build (x, this should be handled by other language specific tool instead)
   - build browser-wasm or wasi-wasm
 - tag
-  - add annotations/attributes to an existing wasm file
+  - add annotations/attributes to a wasm file
+- validate
+  - validate a wasm to see if it's qualified one supported by wano
 - push
   - push a wasm to an OCI registry
 - pull
-  - pull a wasm from an OCI registry and validate if this is a qualified wasm file supported by wasmlet
-- validate
-  - validate a wasm to see if it's qualified one supported by wasmlet
+  - pull a wasm from an OCI registry and validate if this is a qualified wasm file supported by wano
 - list
   - list all wasm files at local
 - run
-  - run a local/remote wasm locally w/ capabilities allowed
+  - run a local/remote wasm w/ capabilities allowed
 - stop
   - stop a running wasm at local
 - ps
   - list all running wasm processes at local
-- check
-    - check the env is supported for wasmlet
+
