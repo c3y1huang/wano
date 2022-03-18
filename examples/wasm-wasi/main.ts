@@ -11,7 +11,7 @@ const instance = await WebAssembly.instantiate(module, {
     "wasi_snapshot_preview1": context.exports,
 });
 
-console.log(instance.exports);
+console.dir(instance.exports);
 
 context.start(instance);
 const greet = instance.exports.greet as CallableFunction;

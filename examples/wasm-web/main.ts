@@ -1,9 +1,15 @@
-// const code = await Deno.readFile("./pkg/wasm_web_bg.wasm");
-// const module = new WebAssembly.Module(code);
-// const instance = new WebAssembly.Instance(module); // need imports object when using Web APIs
-// const greet = instance.exports.greet as CallableFunction;
-// greet();
+import { parse, Args } from "https://deno.land/std@0.130.0/flags/mod.ts";
+import init, {greet} from "./target/generated/wasm_web.js";
 
-import init, {greet} from "./pkg/wasm_web.js";
-await init(Deno.readFile('./pkg/wasm_web_bg.wasm'));
-greet();
+async function main(args: Args): Promise<void> {
+    await init(Deno.readFile('./target/generated/wasm_web_bg.wasm'));
+
+    if (args._.includes("start")) {
+        return;
+    }
+
+    greet();
+}
+
+const parsedArgs = parse(Deno.args);
+await main(parsedArgs);

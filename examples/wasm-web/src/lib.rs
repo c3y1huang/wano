@@ -1,8 +1,7 @@
 use wasm_bindgen::prelude::*;
 use web_sys::console;
 
-// When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
-// allocator.
+// When the `wee_alloc` feature is enabled, use `wee_alloc` as the global allocator.
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
@@ -14,5 +13,10 @@ extern {
 
 #[wasm_bindgen]
 pub fn greet() {
-    console::log_1(&"Hello!".into());
+    console::log_1(&"Hello wasm-web!".into());
+}
+
+#[wasm_bindgen(start)]
+pub fn main() {
+    console::log_1(&"Hello wasm-web, start!".into());
 }

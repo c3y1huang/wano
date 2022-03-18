@@ -1,10 +1,15 @@
 default: clean build
 
+WASM_PACK_OUT_DIR := "./target/generated"
+
 clean:
-	rm -rf ./pkg
+	rm -rf {{WASM_PACK_OUT_DIR}}
 	cargo clean
 build:
-	rm -rf ./pkg
-	wasm-pack build -t web
+	rm -rf {{WASM_PACK_OUT_DIR}}
+	wasm-pack build -t web -d {{WASM_PACK_OUT_DIR}}
 run:
 	deno run --allow-all main.ts
+
+run-start:
+	deno run --allow-all main.ts -- start
