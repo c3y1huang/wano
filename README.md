@@ -1,10 +1,10 @@
 > This project is under active development 🚧!
 
-# WANO
+## What's WANO
 
 A WASM development tool and runtime based on different WASM providers.
 
-## Functions
+## TODO
 
 - build (x, this should be handled by other language specific tool instead)
   - build browser-wasm or wasi-wasm
