@@ -1,4 +1,3 @@
-use crate::wasm::provider::WasmProviderKind;
 use crate::wasm::{create_wasm_runtime, Wasm};
 
 mod cmd;
@@ -13,7 +12,15 @@ async fn main() {
         name: "".to_string(),
         url: None,
         path: Default::default(),
+        entry: None,
+        args: None,
+        envs: None
     };
-    let runtime = create_wasm_runtime(WasmProviderKind::Deno).expect("valid runtime");
-    runtime.run_wasi(wasm).expect("run successfully");
+
+    let runtime = create_wasm_runtime(
+        wasm.kind().expect("valid wasm kind"),
+        None,
+    ).expect("valid runtime");
+
+    runtime.run_wasi(wasm).await.expect("run successfully");
 }

@@ -1,6 +1,7 @@
 [workspace]
+resolver = "2"
 default-members = ["crates/app"]
-members = ["crates/app"]
+members = ["crates/app", "wasm-examples/wasm-wasi", "wasm-examples/wasm-web"]
 
 [profile.release]
 opt-level = 'z'
