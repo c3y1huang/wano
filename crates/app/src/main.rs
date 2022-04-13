@@ -1,3 +1,7 @@
+use std::str::FromStr;
+
+use url::Url;
+
 use crate::wasm::{create_wasm_runtime, Wasm};
 
 mod cmd;
@@ -10,17 +14,16 @@ async fn main() {
 
     let wasm = Wasm {
         name: "".to_string(),
-        url: None,
-        path: Default::default(),
+        url: Url::from_str("").unwrap(),
         entry: None,
         args: None,
-        envs: None
+        envs: None,
     };
 
     let runtime = create_wasm_runtime(
-        wasm.kind().expect("valid wasm kind"),
+        wasm.kind().unwrap(),
         None,
-    ).expect("valid runtime");
+    ).unwrap();
 
-    runtime.run_wasi(wasm).await.expect("run successfully");
+    runtime.run(wasm).await;
 }

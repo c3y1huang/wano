@@ -10,7 +10,7 @@ use crate::wasm::{Wasm, WasmKind, WasmRuntimeTrait};
 pub struct WasmerRuntime;
 
 impl WasmerRuntime {
-    pub(crate) fn new() -> impl WasmRuntimeTrait {
+    pub fn new() -> impl WasmRuntimeTrait {
         Self
     }
 }
@@ -19,10 +19,10 @@ impl WasmerRuntime {
 impl WasmRuntimeTrait for WasmerRuntime {
     async fn run_wasi(&self, wasm: Wasm) -> anyhow::Result<()> {
         let store = Store::default();
-        let module = Module::from_file(&store, &wasm.path.unwrap())?;
+        let module = Module::from_file(&store, &wasm.path().unwrap())?;
 
-        let mut wasm_state_builder = WasiState::new("wano");
-        let wasi_env_builder = wasm_state_builder.args(wasm.args.clone().unwrap_or(vec![]));
+        let mut wasm_state_builder = WasiState::new(env!("CARGO_PKG_NAME"));
+        let wasi_env_builder = wasm_state_builder.args(wasm.args.clone().unwrap_or_default());
 
         for (key, value) in &wasm.envs {
             wasi_env_builder.env(&key, &value);
@@ -40,13 +40,13 @@ impl WasmRuntimeTrait for WasmerRuntime {
         Ok(())
     }
 
-    async fn run_wasm_web(&self, wasm: Wasm) -> anyhow::Result<()> {
+    async fn run_web(&self, _wasm: Wasm) -> anyhow::Result<()> {
         unimplemented!("Wasmer doesn't support WASM backed by Web API ABI")
     }
 
-    async fn run_wasm_emscripten(&self, wasm: Wasm) -> anyhow::Result<()> {
+    async fn run_emscripten(&self, wasm: Wasm) -> anyhow::Result<()> {
         let store = Store::default();
-        let module = Module::from_file(&store, &wasm.path.unwrap())?;
+        let module = Module::from_file(&store, &wasm.path().unwrap())?;
 
         let mut em_globals = EmscriptenGlobals::new(&store, &module)
             .map_err(|err| anyhow!("{}", err))?;
@@ -63,9 +63,9 @@ impl WasmRuntimeTrait for WasmerRuntime {
     }
 }
 
-pub(crate) fn get_wasm_kind(wasm: &Wasm) -> anyhow::Result<WasmKind> {
+pub fn get_wasm_kind(wasm: &Wasm) -> anyhow::Result<WasmKind> {
     let store = Store::default();
-    let module = Module::from_file(&store, &wasm.path.clone().unwrap())?;
+    let module = Module::from_file(&store, &wasm.path().unwrap())?;
     let import_object = imports! {};
     let instance = Instance::new(&module, &import_object)?;
 

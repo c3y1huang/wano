@@ -1,41 +1,54 @@
 use std::path::PathBuf;
 
-use anyhow::anyhow;
 use async_trait::async_trait;
 use url::Url;
 
-use crate::common::path::wasm_path;
+use crate::common::file::{copy_wasm, download_wasm};
+use crate::common::path::{wasm_dir, wasm_path};
 use crate::wasm::provider::deno::DenoRuntime;
-pub(crate) use crate::wasm::provider::wasmer::get_wasm_kind;
+pub use crate::wasm::provider::wasmer::get_wasm_kind;
 use crate::wasm::provider::wasmer::WasmerRuntime;
 use crate::wasm::provider::WasmProviderKind;
 
-pub(crate) mod provider;
+pub mod provider;
 
 #[derive(Debug)]
-pub(crate) struct Wasm {
-    pub(crate) name: String,
-    pub(crate) url: Option<Url>,
-    pub(crate) path: Option<PathBuf>,
-    pub(crate) entry: Option<String>,
-    pub(crate) args: Option<Vec<String>>,
-    pub(crate) envs: Option<(String, String)>,
+pub struct Wasm {
+    pub name: String,
+    pub url: Url,
+    pub entry: Option<String>,
+    pub args: Option<Vec<String>>,
+    pub envs: Option<(String, String)>,
 }
 
 #[async_trait(? Send)]
-pub(crate) trait WasmRuntimeTrait {
-    async fn run_wasi(&self, wasm: Wasm) -> anyhow::Result<()>;
-    async fn run_wasm_web(&self, wasm: Wasm) -> anyhow::Result<()>;
-    async fn run_wasm_emscripten(&self, wasm: Wasm) -> anyhow::Result<()>;
+pub trait WasmRuntimeTrait {
+    async fn run(&self, wasm: Wasm) -> anyhow::Result<()> {
+        match wasm.kind().unwrap() {
+            WasmKind::Wasi => self.run_wasi(wasm).await,
+            WasmKind::Web => self.run_web(wasm).await,
+            WasmKind::Emscripten => self.run_emscripten(wasm).await
+        }
+    }
+
+    async fn run_wasi(&self, _wasm: Wasm) -> anyhow::Result<()> {
+        unimplemented!("not supported")
+    }
+    async fn run_web(&self, _wasm: Wasm) -> anyhow::Result<()> {
+        unimplemented!("not supported")
+    }
+    async fn run_emscripten(&self, _wasm: Wasm) -> anyhow::Result<()> {
+        unimplemented!("not supported")
+    }
 }
 
-pub(crate) enum WasmKind {
+pub enum WasmKind {
     Wasi,
     Web,
     Emscripten,
 }
 
-pub(crate) fn create_wasm_runtime(
+pub fn create_wasm_runtime(
     wasm_kind: WasmKind,
     wasm_provider: Option<WasmProviderKind>,
 ) -> anyhow::Result<Box<dyn WasmRuntimeTrait>> {
@@ -66,18 +79,15 @@ impl Wasm {
             .file_name()
             .unwrap()
             .to_string_lossy();
-        let path = wasm_path(&name)?;
 
         let wasm = Self {
             name: name.to_string(),
-            url: Some(url),
-            path: Some(path),
+            url,
             entry: None,
             args: None,
-            envs: None
+            envs: None,
         };
 
-        wasm.download()?;
         Ok(wasm)
     }
 
@@ -85,18 +95,22 @@ impl Wasm {
         get_wasm_kind(self)
     }
 
-    fn download(&self) -> anyhow::Result<PathBuf> {
-        if self.url.is_none() {
-            return Err(anyhow!(""));
-        }
+    pub fn dir(&self) -> anyhow::Result<PathBuf> {
+        wasm_dir(self)
+    }
 
-        //TODO extended downloader
-        match self.url.as_ref().unwrap().scheme() {
-            "http" | "https" => {}
-            "file" => {}
+    pub fn path(&self) -> anyhow::Result<PathBuf> {
+        wasm_path(self)
+    }
+
+    pub async fn download(&self) -> anyhow::Result<PathBuf> {
+        //TODO add container image
+        let path = match self.url.scheme() {
+            "http" | "https" => download_wasm(&self.url, wasm_path(self)?).await?,
+            "file" => copy_wasm(&self.url, wasm_path(self)?).await?,
             x => unimplemented!("{} not supported", x),
-        }
+        };
 
-        Ok(PathBuf::new())
+        Ok(path)
     }
 }
